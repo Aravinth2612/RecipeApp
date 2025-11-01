@@ -17,7 +17,7 @@ const RecipeDetails = ({ recipe, onClose }) => {
       <img
         src={recipe.strMealThumb}
         alt={recipe.strMeal}
-        className="w-full rounded mb-4"
+        className="w-50 h-50 rounded mb-4"
       />
 
       <h3 className="font-semibold mb-2">Instructions:</h3>

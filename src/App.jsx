@@ -12,13 +12,11 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch all recipes (default: chicken)
   useEffect(() => {
     fetchRecipes("chicken");
     fetchCategories();
   }, []);
 
-  // Fetch recipes
   const fetchRecipes = async (query) => {
     try {
       const res = await axios.get(
@@ -42,13 +40,11 @@ const App = () => {
     }
   };
 
-  // Search handler
   const handleSearch = (term) => {
     setSearchTerm(term);
     fetchRecipes(term);
   };
 
-  // Filter handler
   const handleFilter = async (category) => {
     setSelectedCategory(category);
     if (category === "") {
@@ -63,7 +59,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-5">
-      <h1 className="text-3xl font-bold text-center mb-5 text-gray-800">
+      <h1 className="text-3xl font-bold text-center mb-5 text-[#E96D71]">
         🍽️ Recipe Explorer
       </h1>
 

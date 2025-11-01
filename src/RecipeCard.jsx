@@ -3,7 +3,7 @@ import React from "react";
 const RecipeCard = ({ recipe, onClick }) => {
   return (
     <div
-      className="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg cursor-pointer"
+      className="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg cursor-pointer hover:scale-105 cursor-pointer"
       onClick={onClick}
     >
       <img
