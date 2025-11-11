@@ -10,25 +10,48 @@ const App = () => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("chicken");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchRecipes("chicken");
     fetchCategories();
   }, []);
 
-  const fetchRecipes = async (query) => {
+  useEffect(() => {
+    fetchRecipes();
+  }, [searchTerm, selectedCategory]);
+
+  const fetchRecipes = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get(
-        `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`
-      );
-      setRecipes(res.data.meals || []);
+      let meals = [];
+
+      if (selectedCategory) {
+        const res = await axios.get(
+          `https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedCategory}`
+        );
+        meals = res.data.meals || [];
+
+        if (searchTerm) {
+          meals = meals.filter((meal) =>
+            meal.strMeal.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+      } else {
+        const res = await axios.get(
+          `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`
+        );
+        meals = res.data.meals || [];
+      }
+
+      setRecipes(meals);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching recipes:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fetch categories
   const fetchCategories = async () => {
     try {
       const res = await axios.get(
@@ -36,25 +59,16 @@ const App = () => {
       );
       setCategories(res.data.meals);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching categories:", error);
     }
   };
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    fetchRecipes(term);
   };
 
-  const handleFilter = async (category) => {
+  const handleFilter = (category) => {
     setSelectedCategory(category);
-    if (category === "") {
-      fetchRecipes("chicken");
-      return;
-    }
-    const res = await axios.get(
-      `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
-    );
-    setRecipes(res.data.meals || []);
   };
 
   return (
@@ -64,12 +78,12 @@ const App = () => {
       </h1>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-6">
-        <SearchBar onSearch={handleSearch} />
         <Filter
           categories={categories}
           selectedCategory={selectedCategory}
           onFilter={handleFilter}
         />
+        <SearchBar onSearch={handleSearch} />
       </div>
 
       {selectedRecipe ? (
